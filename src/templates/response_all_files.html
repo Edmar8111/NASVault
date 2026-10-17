@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ef">
+    <title>Arquivos disponíveis | NASVault</title>
+    <link rel="stylesheet" href="/static/response_all_files.css">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="topbar">
+            <a class="brand" href="/" aria-label="Voltar para NASVault">
+                <span class="brand-mark" aria-hidden="true">N</span>
+                <span>NASVault<span class="brand-period">.</span></span>
+            </a>
+            <span class="topbar-note">BIBLIOTECA DE ARQUIVOS</span>
+            <form class="logout-form" action="/logout" method="post">
+                <button class="logout-button" type="submit">Sair</button>
+            </form>
+        </header>
+
+        <section class="result" aria-labelledby="page-title">
+            <div class="result-heading">
+                <div class="status-label"><span class="status-dot"></span>REPOSITÓRIO</div>
+                <p class="eyebrow">Arquivos armazenados no servidor</p>
+                <h1 id="page-title">Seus arquivos<span class="heading-period">.</span></h1>
+                <p class="intro">Consulte os arquivos registrados e seus dados de armazenamento.</p>
+            </div>
+
+            <section class="files-panel" aria-label="Lista de arquivos">
+                <div class="panel-heading">
+                    <div>
+                        <p class="field-label">ARQUIVOS REGISTRADOS</p>
+                        <h2>{{ files|length }} arquivo{{ "s" if files|length != 1 else "" }}</h2>
+                    </div>
+                    <span class="file-count">{{ "%02d"|format(files|length) }}</span>
+                </div>
+
+                {% if files %}
+                <div class="file-list">
+                    {% for file in files %}
+                    <article class="file-entry">
+                        <div class="file-topline">
+                            <div class="file-symbol" aria-hidden="true">ARQ</div>
+                            <div class="file-identity">
+                                <p class="field-label">ARQUIVO #{{ file.id }}</p>
+                                <h3>
+                                    {% if file.status == "ready" %}
+                                    <a href="/read/file/v2/{{ file.id }}" target="_blank">{{ file.file_name }}</a>
+                                    {% else %}
+                                    {{ file.file_name }}
+                                    {% endif %}
+                                </h3>
+                            </div>
+                            <span class="file-status status-{{ file.status|lower|replace(' ', '-') }}">{{ file.status }}</span>
+                        </div>
+
+                        <dl class="metadata-grid">
+                            <div class="metadata-item">
+                                <dt class="field-label">TAMANHO</dt>
+                                <dd>{{ "{:,}".format(file.file_size).replace(",", ".") }} bytes</dd>
+                            </div>
+                            <div class="metadata-item">
+                                <dt class="field-label">PARTES</dt>
+                                <dd>{{ file.total_chunks }}</dd>
+                            </div>
+                            <div class="metadata-item metadata-hash">
+                                <dt class="field-label">HASH DO ARQUIVO</dt>
+                                <dd>{{ file.file_hash }}</dd>
+                            </div>
+                            <div class="metadata-item metadata-date">
+                                <dt class="field-label">DATA DE CRIAÇÃO</dt>
+                                <dd>{{ file.created_at }}</dd>
+                            </div>
+                        </dl>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-symbol" aria-hidden="true">—</div>
+                    <h3>Nenhum arquivo por aqui</h3>
+                    <p>Os arquivos registrados aparecerão nesta lista.</p>
+                </div>
+                {% endif %}
+            </section>
+
+            <div class="receipt-line">
+                <span class="receipt-check" aria-hidden="true">✓</span>
+                <p><strong>Consulta concluída</strong><br>Os dados exibidos foram retornados pelo servidor.</p>
+                <code>GET&nbsp; /read-all/files/v2/</code>
+            </div>
+
+            <footer class="page-footer">
+                <a class="back-link" href="/">
+                    <span aria-hidden="true">←</span>
+                    Voltar para início
+                </a>
+                <span class="footer-note">RESPOSTA DO SERVIDOR</span>
+            </footer>
+        </section>
+    </main>
+</body>
+</html>

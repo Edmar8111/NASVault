@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ef">
+    <title>Entrar | NASVault</title>
+    <link rel="stylesheet" href="/static/access.css">
+</head>
+<body>
+    <div class="page-shell login-shell">
+        <header class="topbar">
+            <a class="brand" href="/" aria-label="NASVault, início">
+                <span class="brand-mark" aria-hidden="true">N</span>
+                <span>NASVault<span class="brand-period">.</span></span>
+            </a>
+            <span class="topbar-note">SUA BIBLIOTECA DE ARQUIVOS</span>
+        </header>
+        <main class="login-layout">
+            <section class="login-intro" aria-labelledby="page-title">
+                <div class="status-label"><span class="status-dot"></span>ARMAZENAMENTO PRIVADO</div>
+                <p class="eyebrow">Seus arquivos em um só lugar</p>
+                <h1>Guarde o que importa. Acesse quando quiser<span class="heading-period">.</span></h1>
+                <p class="intro">Entre na sua conta para enviar arquivos e consultar sua biblioteca, com uma experiência simples e segura.</p>
+            </section>
+            <section class="login-panel" aria-labelledby="login-title">
+                <p class="field-label">BEM-VINDO DE VOLTA</p>
+                <h2 id="login-title">Acesse sua conta</h2>
+                <form class="login-form" action="/login" method="post">
+                    <div class="form-field">
+                        <label for="user_id">ID de usuário</label>
+                        <input type="number" id="user_id" name="user_id" min="1" required autocomplete="username">
+                    </div>
+                    <div class="form-field">
+                        <label for="username">Nome de usuário</label>
+                        <input type="text" id="username" name="username" maxlength="100" required autocomplete="off">
+                    </div>
+                    <button class="primary-button" type="submit">Entrar <span aria-hidden="true">→</span></button>
+                </form>
+                <p class="panel-footnote"><span class="status-dot"></span>Ainda não tem uma conta? <a class="text-link" href="/signup-page">Cadastre-se</a></p>
+            </section>
+        </main>
+        <footer class="page-footer">
+            <span class="footer-note">ACESSO AUTENTICADO</span>
+            <span class="footer-note">POST&nbsp; /login</span>
+        </footer>
+    </div>
+</body>
+</html>

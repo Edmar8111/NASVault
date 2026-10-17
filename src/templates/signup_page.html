@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ef">
+    <title>Criar conta | NASVault</title>
+    <link rel="stylesheet" href="/static/access.css">
+</head>
+<body>
+    <div class="page-shell login-shell">
+        <header class="topbar">
+            <a class="brand" href="/" aria-label="NASVault, início">
+                <span class="brand-mark" aria-hidden="true">N</span>
+                <span>NASVault<span class="brand-period">.</span></span>
+            </a>
+            <span class="topbar-note">CRIE SUA BIBLIOTECA</span>
+        </header>
+        <main class="login-layout">
+            <section class="login-intro" aria-labelledby="page-title">
+                <div class="status-label"><span class="status-dot"></span>COMECE AGORA</div>
+                <p class="eyebrow">Uma biblioteca só sua</p>
+                <h1>Seus arquivos merecem um lugar seguro<span class="heading-period">.</span></h1>
+                <p class="intro">Crie sua conta para começar a armazenar e organizar seus arquivos em um só lugar.</p>
+            </section>
+            <section class="login-panel" aria-labelledby="signup-title">
+                <p class="field-label">NOVO CADASTRO</p>
+                <h2 id="signup-title">Crie sua conta</h2>
+                <form id="signup-form" class="login-form">
+                    <div class="form-field">
+                        <label for="username">Nome de usuário</label>
+                        <input type="text" id="username" name="username" minlength="1" maxlength="100" required autocomplete="username">
+                    </div>
+                    <div class="form-field">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" minlength="3" maxlength="150" required autocomplete="email">
+                    </div>
+                    <button class="primary-button" type="submit">Criar conta <span aria-hidden="true">→</span></button>
+                    <p id="signup-message" class="form-message" role="status" aria-live="polite"></p>
+                </form>
+                <p class="panel-footnote"><span class="status-dot"></span>Já possui uma conta? <a class="text-link" href="/">Entrar</a></p>
+            </section>
+        </main>
+        <footer class="page-footer">
+            <span class="footer-note">CADASTRO DE USUÁRIO</span>
+            <span class="footer-note">POST&nbsp; /create/users/v2</span>
+        </footer>
+    </div>
+    <script>
+        const signupForm = document.querySelector("#signup-form");
+        const signupMessage = document.querySelector("#signup-message");
+        const signupButton = signupForm.querySelector('button[type="submit"]');
+
+        signupForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            signupButton.disabled = true;
+            signupMessage.dataset.kind = "";
+            signupMessage.textContent = "Criando sua conta...";
+
+            try {
+                const formData = new FormData(signupForm);
+                const response = await fetch("/create/users/v2", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    const detail = result.detail;
+                    const message = Array.isArray(detail)
+                        ? detail.map((error) => error.msg).join(" ")
+                        : detail;
+                    throw new Error(message || "Não foi possível criar a conta.");
+                }
+
+                signupForm.reset();
+                signupMessage.dataset.kind = "success";
+                signupMessage.textContent = "Conta criada com sucesso. Faça login para continuar.";
+            } catch (error) {
+                signupMessage.dataset.kind = "error";
+                signupMessage.textContent = error instanceof Error
+                    ? error.message
+                    : "Não foi possível criar a conta. Tente novamente.";
+            } finally {
+                signupButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

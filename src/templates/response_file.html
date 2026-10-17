@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ef">
+    <title>{{ file.file_name }} | NASVault</title>
+    <link rel="stylesheet" href="/static/response_file.css">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="topbar">
+            <a class="brand" href="/read-all/files/v2/" aria-label="Voltar para NASVault">
+                <span class="brand-mark" aria-hidden="true">N</span>
+                <span>NASVault<span class="brand-period">.</span></span>
+            </a>
+            <span class="topbar-note">VISUALIZADOR DE ARQUIVOS</span>
+            <form class="logout-form" action="/logout" method="post">
+                <button class="logout-button" type="submit">Sair</button>
+            </form>
+        </header>
+
+        <section class="result" aria-labelledby="page-title">
+            <div class="result-heading">
+                <div class="status-label"><span class="status-dot"></span>ARQUIVO DISPONÍVEL</div>
+                <p class="eyebrow">Prévia e informações</p>
+                <h1 id="page-title">{{ file.file_name }}<span class="heading-period">.</span></h1>
+            </div>
+
+            <section class="preview-panel" aria-label="Prévia do arquivo">
+                <a class="download-button" href="/read/file/v2/{{ file.id }}/download">Baixar arquivo</a>
+                {% if preview_kind == "image" %}
+                <div class="media-stage image-stage">
+                    <img src="{{ content_url }}" alt="Prévia de {{ file.file_name }}">
+                </div>
+                {% elif preview_kind == "video" %}
+                <div class="media-stage video-stage">
+                    <video controls preload="metadata" playsinline>
+                        <source src="{{ content_url }}" type="{{ media_type }}">
+                        Seu navegador não oferece suporte à reprodução deste vídeo.
+                    </video>
+                </div>
+                {% else %}
+                <div class="generic-preview">
+                    <div class="file-symbol" aria-hidden="true">{{ file.file_name.rsplit('.', 1)[-1][:8]|upper if '.' in file.file_name else 'ARQ' }}</div>
+                    <div>
+                        <p class="field-label">PRÉVIA DO TIPO DE ARQUIVO</p>
+                        <h2>{{ media_type }}</h2>
+                        <p>Este formato não possui visualização de conteúdo nesta página.</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <dl class="metadata-grid">
+                    <div class="metadata-item">
+                        <dt class="field-label">TAMANHO</dt>
+                        <dd>{{ "{:,}".format(file.file_size).replace(",", ".") }} bytes</dd>
+                    </div>
+                    <div class="metadata-item">
+                        <dt class="field-label">PARTES</dt>
+                        <dd>{{ file.total_chunks }}</dd>
+                    </div>
+                    <div class="metadata-item">
+                        <dt class="field-label">STATUS</dt>
+                        <dd>{{ file.status }}</dd>
+                    </div>
+                    <div class="metadata-item metadata-hash">
+                        <dt class="field-label">HASH SHA-256</dt>
+                        <dd>{{ file.file_hash }}</dd>
+                    </div>
+                    <div class="metadata-item metadata-date">
+                        <dt class="field-label">DATA DE CRIAÇÃO</dt>
+                        <dd>{{ file.created_at }}</dd>
+                    </div>
+                </dl>
+            </section>
+
+            <div class="receipt-line">
+                <span class="receipt-check" aria-hidden="true">✓</span>
+                <p><strong>Arquivo original</strong><br>O conteúdo é entregue sem conversão ou redução de qualidade.</p>
+                <code>GET&nbsp; /read/file/v2/{{ file.id }}</code>
+            </div>
+
+            <footer class="page-footer">
+                <a class="back-link" href="/read-all/files/v2/">
+                    <span aria-hidden="true">←</span>
+                    Todos os arquivos
+                </a>
+                <span class="footer-note">RESPOSTA DO SERVIDOR</span>
+            </footer>
+        </section>
+    </main>
+</body>
+</html>

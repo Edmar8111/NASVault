@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f5ef">
+    <title>Enviar arquivo | NASVault</title>
+    <link rel="stylesheet" href="/static/access.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <a class="brand" href="/" aria-label="NASVault, início">
+                <span class="brand-mark" aria-hidden="true">N</span>
+                <span>NASVault<span class="brand-period">.</span></span>
+            </a>
+            <span class="topbar-note">CENTRAL DE RECEBIMENTO</span>
+            <form class="logout-form" action="/logout" method="post">
+                <button class="logout-button" type="submit">Sair</button>
+            </form>
+        </header>
+
+        <main class="upload-layout">
+            <section class="upload-intro" aria-labelledby="page-title">
+                <div class="status-label"><span class="status-dot"></span>ÁREA AUTENTICADA</div>
+                <p class="eyebrow">Envio seguro de arquivos</p>
+                <h1 id="page-title">Um lugar para cada arquivo<span class="heading-period">.</span></h1>
+                <p class="intro">Escolha um arquivo para armazenar. O envio preserva o conteúdo original.</p>
+                <a class="library-link" href="/read-all/files/v2/">
+                    <span aria-hidden="true">↗</span> Consultar arquivos armazenados
+                </a>
+            </section>
+
+            <section class="upload-panel" aria-label="Formulário de envio">
+                <div class="panel-heading">
+                    <div>
+                        <p class="field-label">NOVO ENVIO</p>
+                        <h2>Selecione um arquivo</h2>
+                    </div>
+                    <span class="panel-index" aria-hidden="true">01</span>
+                </div>
+                <form id="form-upload" class="upload-form" action="/upload" method="post" enctype="multipart/form-data" target="upload-sidebar-frame">
+                    <label class="field-label" for="arquivo">ARQUIVO</label>
+                    <input type="file" id="arquivo" name="arquivo" required>
+                    <p class="field-hint">O card aparece imediatamente. O status é atualizado assim que o servidor recebe o arquivo.</p>
+                    <button class="primary-button" type="submit">Enviar arquivo <span aria-hidden="true">→</span></button>
+                </form>
+                <div class="panel-footnote"><span class="status-dot"></span>Conexão protegida pela sua sessão</div>
+            </section>
+
+            <aside class="queue-sidebar" aria-labelledby="queue-title">
+                <div class="queue-heading">
+                    <div>
+                        <p class="field-label">FILA DE ENVIO</p>
+                        <h2 id="queue-title">Em processamento</h2>
+                    </div>
+                    <span class="queue-count" aria-hidden="true">↻</span>
+                </div>
+                <ol id="instant-upload-list" class="instant-upload-list" aria-live="polite" hidden></ol>
+                <iframe
+                    class="queue-frame"
+                    name="upload-sidebar-frame"
+                    src="/uploads/sidebar"
+                    title="Status dos arquivos enviados"
+                ></iframe>
+            </aside>
+        </main>
+
+        <footer class="page-footer">
+            <span class="footer-note">ARMAZENAMENTO DE ARQUIVOS</span>
+            <span class="footer-note">POST&nbsp; /upload</span>
+        </footer>
+    </div>
+    <script>
+        const uploadForm = document.querySelector("#form-upload");
+        const fileInput = document.querySelector("#arquivo");
+        const instantUploadList = document.querySelector("#instant-upload-list");
+        const uploadFrame = document.querySelector('iframe[name="upload-sidebar-frame"]');
+        const buttonUpload = document.querySelector('button.primary-button');
+        let waitingForUploadResponse = false;
+        setInterval(() => {
+            const queueActive = document.querySelector('ol.instant-upload-list');
+            if (queueActive?.attributes.hidden == null || uploadFrame.contentDocument?.querySelector(".queue-feed")?.textContent.includes("Processando arquivo")){
+                buttonUpload.style.display='none'
+            }
+            else{
+                buttonUpload.style.display='block'
+            }
+        }, 500);
+
+        uploadForm.addEventListener("submit", () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const card = document.createElement("li");
+            card.className = "queue-item queue-item-queued";
+
+            const heading = document.createElement("div");
+            heading.className = "queue-item-heading";
+
+            const fileName = document.createElement("span");
+            fileName.className = "queue-item-name";
+            fileName.textContent = file.name;
+
+            const progressLabel = document.createElement("span");
+            progressLabel.className = "queue-item-percent";
+            progressLabel.textContent = "0%";
+
+            const progress = document.createElement("progress");
+            progress.className = "queue-progress";
+            progress.value = 0;
+            progress.max = 100;
+            progress.setAttribute("aria-label", `Envio de ${file.name}`);
+
+            const state = document.createElement("span");
+            state.className = "queue-item-state";
+            state.textContent = "Preparando arquivo para envio...";
+
+            heading.append(fileName, progressLabel);
+            card.append(heading, progress, state);
+            uploadFrame.contentDocument?.querySelector(".queue-feed")?.prepend(card);
+            instantUploadList.hidden = false;
+            waitingForUploadResponse = true;
+
+            const emptyQueueMessage = uploadFrame.contentDocument?.querySelector(".queue-empty");
+            if (emptyQueueMessage) emptyQueueMessage.hidden = true;
+        });
+
+        uploadFrame.addEventListener("load", () => {
+            if (!waitingForUploadResponse) return;
+
+            instantUploadList.replaceChildren();
+            instantUploadList.hidden = true;
+            waitingForUploadResponse = false;
+        });
+    </script>
+</body>
+</html>

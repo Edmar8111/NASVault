@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    color-scheme: light;
+    font-family: 'DM Sans', sans-serif;
+    color: #1d2924;
+    background: transparent;
+    --line: #dfe4da;
+    --green: #22634d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    min-width: 0;
+    margin: 0;
+    background: transparent;
+}
+
+.queue-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 10px 2px 12px;
+    list-style: none;
+}
+
+.queue-item {
+    min-width: 0;
+    padding: 12px 11px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: rgba(255, 254, 250, 0.8);
+}
+
+.queue-item-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.queue-item-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.queue-item-percent {
+    flex: 0 0 auto;
+    color: var(--green);
+    font: 11px 'DM Mono', monospace;
+}
+
+.queue-progress {
+    width: 100%;
+    height: 6px;
+    display: block;
+    margin-top: 10px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 4px;
+    appearance: none;
+    background: #e7ece4;
+}
+
+.queue-progress::-webkit-progress-bar { border-radius: 4px; background: #e7ece4; }
+.queue-progress::-webkit-progress-value { border-radius: 4px; background: var(--green); transition: width 180ms ease; }
+.queue-progress::-moz-progress-bar { border-radius: 4px; background: var(--green); }
+.queue-item-queued .queue-progress::-webkit-progress-value { background: #c28c35; }
+.queue-item-queued .queue-progress::-moz-progress-bar { background: #c28c35; }
+.queue-item-failed .queue-progress::-webkit-progress-value { background: #b65343; }
+.queue-item-failed .queue-progress::-moz-progress-bar { background: #b65343; }
+
+.queue-item-state {
+    display: block;
+    margin-top: 7px;
+    color: #788078;
+    font-size: 10px;
+}
+
+.queue-item-failed .queue-item-state { color: #9a493c; }
+.queue-item-ready .queue-item-state { color: #286548; }
+.queue-empty { margin: 14px 2px; color: #818980; font-size: 12px; line-height: 1.6; }

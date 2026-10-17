@@ -1,0 +1,39 @@
+
+## Get Login Page
+GET http://localhost:8001/login-page
+
+
+### Get 
+GET http://localhost:8001/
+Accept: application/json
+
+
+### Create new user
+POST http://localhost:8001/create/user/v2
+Accept: */*
+Content-Type: application/json
+
+{
+  "username": "admina",
+  "email": "admina"
+}
+
+
+### Post via form-data
+POST http://localhost:8001/login
+Content-Type: application/x-www-form-urlencoded
+
+user_id=1&username=admin
+
+
+@file_id = 42
+
+### Download file (change the ID to an available file)
+GET http://localhost:8001/read/file/v2/{{file_id}}/download
+Accept: application/octet-stream
+
+
+### Download first bytes (checks range streaming)
+GET http://localhost:8001/read/file/v2/{{file_id}}/download
+Range: bytes=0-511
+

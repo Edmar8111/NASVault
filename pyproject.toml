@@ -1,0 +1,27 @@
+[project]
+name = "api"
+version = "0.1.0"
+description = "Armazenamento de arquivos NASVault"
+readme = "README.md"
+authors = [
+    { name = "Edmar", email = "edmaroliveira8111@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "cryptography==50.0.0",
+    "fastapi==0.116.1",
+    "jinja2==3.1.6",
+    "pip>=26.2.1",
+    "pyjwt==2.15.0",
+    "pymysql==1.1.1",
+    "python-multipart==0.0.20",
+    "ruff>=0.17.0",
+    "uvicorn==0.40.0",
+]
+
+[project.scripts]
+api = "api:main"
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"

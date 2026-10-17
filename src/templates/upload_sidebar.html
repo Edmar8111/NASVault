@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if active_uploads %}
+    <meta http-equiv="refresh" content="1;url=/uploads/sidebar">
+    {% endif %}
+    <title>Fila de upload</title>
+    <link rel="stylesheet" href="/static/upload_sidebar.css">
+</head>
+<body>
+    <main class="queue-feed">
+        {% if uploads %}
+        <ol class="queue-list">
+            {% for upload in uploads|reverse %}
+            <li class="queue-item queue-item-{{ upload.status }}">
+                <div class="queue-item-heading">
+                    <span class="queue-item-name">{{ upload.file_name }}</span>
+                    <span class="queue-item-percent">{{ upload.progress }}%</span>
+                </div>
+                <progress
+                    class="queue-progress"
+                    value="{{ upload.progress }}"
+                    max="100"
+                    aria-label="Progresso de {{ upload.file_name }}"
+                >{{ upload.progress }}%</progress>
+                <span class="queue-item-state">
+                    {% if upload.status == "queued" %}Na fila
+                    {% elif upload.status == "uploading" %}Processando arquivo
+                    {% elif upload.status == "ready" %}Concluído
+                    {% else %}Falha no processamento{% endif %}
+                </span>
+            </li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <p class="queue-empty">Nenhum arquivo na fila. O status aparece aqui assim que o servidor recebe o envio.</p>
+        {% endif %}
+    </main>
+</body>
+</html>
