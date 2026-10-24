@@ -40,6 +40,13 @@
                         Seu navegador não oferece suporte à reprodução deste vídeo.
                     </video>
                 </div>
+                {% elif preview_kind == "audio" %}
+                <div class="media-stage audio-stage">
+                    <audio controls preload="metadata">
+                        <source src="{{ content_url }}" type="{{ media_type }}">
+                        Seu navegador não oferece suporte à reprodução deste áudio.
+                    </audio>
+                </div>
                 {% else %}
                 <div class="generic-preview">
                     <div class="file-symbol" aria-hidden="true">{{ file.file_name.rsplit('.', 1)[-1][:8]|upper if '.' in file.file_name else 'ARQ' }}</div>

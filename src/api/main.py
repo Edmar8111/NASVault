@@ -508,7 +508,7 @@ async def read_file_content(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Arquivo ainda nao esta disponivel")
 
     media_type, preview_kind = _identify_file_type(file)
-    if preview_kind not in {"image", "video"}:
+    if preview_kind not in {"image", "video", "audio"}:
         raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="Arquivo sem preview de midia")
 
     file_size = int(file["file_size"])
@@ -608,7 +608,7 @@ def _identify_file_type_cached(file_id: int, file_name: str, file_size: int, fil
     if header.startswith(bytes.fromhex("1a45dfa3")):
         guessed_type = mimetypes.guess_type(file_name)[0]
         if guessed_type and guessed_type.startswith("audio/"):
-            return guessed_type, "other"
+            return guessed_type, "audio"
         return (guessed_type if guessed_type and guessed_type.startswith("video/") else "video/webm"), "video"
     if header.startswith(b"RIFF") and header[8:12] == b"AVI ":
         return "video/x-msvideo", "video"
@@ -617,7 +617,7 @@ def _identify_file_type_cached(file_id: int, file_name: str, file_size: int, fil
         if brand in {b"avif", b"avis"}:
             return "image/avif", "image"
         if brand in {b"M4A ", b"M4B ", b"M4P "}:
-            return mimetypes.guess_type(file_name)[0] or "audio/mp4", "other"
+            return mimetypes.guess_type(file_name)[0] or "audio/mp4", "audio"
         return ("video/quicktime" if brand == b"qt  " else "video/mp4"), "video"
     if header.startswith((bytes.fromhex("000001ba"), bytes.fromhex("000001b3"))):
         return "video/mpeg", "video"
@@ -625,6 +625,8 @@ def _identify_file_type_cached(file_id: int, file_name: str, file_size: int, fil
     guessed_type = mimetypes.guess_type(file_name)[0] or "application/octet-stream"
     if guessed_type.startswith(("image/", "video/")):
         return "application/octet-stream", "other"
+    if guessed_type.startswith("audio/"):
+        return guessed_type, "audio"
     return guessed_type, "other"
 
 
